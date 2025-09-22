@@ -1,11 +1,11 @@
 // src/components/ChatApp.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import Sidebar from "./Sidebar";
 import ChatWindow from "./ChatWindow";
 import { useAuth } from "../hooks/useAuth";
 import { chatAPI } from "../utils/api";
 import io from "socket.io-client";
-import '../styles/ChatApp.css';
+import "../styles/ChatApp.css";
 
 const ChatApp = () => {
   const { user } = useAuth();
@@ -15,20 +15,52 @@ const ChatApp = () => {
   const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const messagesEndRef = useRef(null);
+
   useEffect(() => {
     // Initialize socket connection
     const token = localStorage.getItem("token");
     const newSocket = io("http://localhost:5001", {
       auth: { token },
+      transports: ['websocket', 'polling']
     });
 
     newSocket.on("connect", () => {
       console.log("Connected to server");
+      // Join user's chats
+      const chatIds = chats.map((chat) => chat._id);
+      if (chatIds.length > 0) {
+        newSocket.emit("join-chats", chatIds);
+      }
     });
 
-    newSocket.on("new-message", (message) => {
-      setMessages((prev) => [...prev, message]);
-      // Update chat list with new last message
+    // newSocket.on("new-message", (message) => {
+    //   setMessages((prev) => [...prev, message]);
+    //   // Update chat list with new last message
+    //   setChats((prev) =>
+    //     prev.map((chat) =>
+    //       chat._id === message.chat
+    //         ? { ...chat, lastMessage: message, updatedAt: new Date() }
+    //         : chat
+    //     )
+    //   );
+    // });
+
+    setSocket(newSocket);
+
+    return () => newSocket.close();
+  }, [chats]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("new-message", (message) => {
+      // Only add if it's for the selected chat
+      if (selectedChat && message.chat === selectedChat._id) {
+        setMessages((prev) => [...prev, message]);
+      }
+
+      // Update chat preview in sidebar
       setChats((prev) =>
         prev.map((chat) =>
           chat._id === message.chat
@@ -36,12 +68,15 @@ const ChatApp = () => {
             : chat
         )
       );
-    });
+  });
+  return () => {
+      socket.off("new-message");
+    };
+  }, [socket, selectedChat]);
 
-    setSocket(newSocket);
-
-    return () => newSocket.close();
-  }, []);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   useEffect(() => {
     loadChats();
@@ -84,15 +119,15 @@ const ChatApp = () => {
   };
 
   const handleNewChat = (newChat) => {
-    console.log('New chat added:', newChat); // Debug log
-    setChats(prev => [newChat, ...prev]);
+    console.log("New chat added:", newChat); // Debug log
+    setChats((prev) => [newChat, ...prev]);
     setSelectedChat(newChat);
     setMessages([]);
   };
 
   return (
     <div className="chat-app-container">
-      <Sidebar 
+      <Sidebar
         chats={chats}
         selectedChat={selectedChat}
         onChatSelect={handleChatSelect}
@@ -101,7 +136,7 @@ const ChatApp = () => {
         user={user}
         className="sidebar"
       />
-      <ChatWindow 
+      <ChatWindow
         selectedChat={selectedChat}
         messages={messages}
         onSendMessage={handleSendMessage}
@@ -113,8 +148,6 @@ const ChatApp = () => {
 };
 
 export default ChatApp;
-
-
 
 // import React, { useState, useEffect, useRef } from 'react';
 // import Sidebar from './Sidebar';
@@ -155,7 +188,7 @@ export default ChatApp;
 //       // FIXED: Handle new messages
 //       newSocket.on('new-message', (data) => {
 //         console.log('New message received:', data);
-        
+
 //         // Add message to current messages if it's for the selected chat
 //         if (selectedChat && data.message.chat === selectedChat._id) {
 //           setMessages(prevMessages => {
@@ -169,7 +202,7 @@ export default ChatApp;
 //         }
 
 //         // Update the chat list with new last message
-//         setChats(prevChats => 
+//         setChats(prevChats =>
 //           prevChats.map(chat => {
 //             if (chat._id === data.message.chat) {
 //               return {
@@ -186,9 +219,9 @@ export default ChatApp;
 //       // Handle message delivery confirmations
 //       newSocket.on('message-delivered', (data) => {
 //         console.log('Message delivered:', data);
-//         setMessages(prevMessages => 
-//           prevMessages.map(msg => 
-//             msg._id === data.messageId 
+//         setMessages(prevMessages =>
+//           prevMessages.map(msg =>
+//             msg._id === data.messageId
 //               ? { ...msg, deliveredTo: data.deliveredTo }
 //               : msg
 //           )
@@ -198,7 +231,7 @@ export default ChatApp;
 //       // Handle read receipts
 //       newSocket.on('messages-read', (data) => {
 //         console.log('Messages read:', data);
-//         setMessages(prevMessages => 
+//         setMessages(prevMessages =>
 //           prevMessages.map(msg => {
 //             if (data.messageIds.includes(msg._id)) {
 //               return {
@@ -288,21 +321,21 @@ export default ChatApp;
 //   const handleChatSelect = async (chat) => {
 //     setSelectedChat(chat);
 //     setMessages([]); // Clear previous messages
-    
+
 //     try {
 //       const response = await chatAPI.getMessages(chat._id);
 //       if (response.data.success) {
 //         setMessages(response.data.messages);
-        
+
 //         // Mark messages as read
 //         await chatAPI.markAsRead(chat._id);
-        
+
 //         // Emit read receipt via socket
 //         if (socket) {
 //           const messageIds = response.data.messages
 //             .filter(msg => msg.sender._id !== user._id)
 //             .map(msg => msg._id);
-          
+
 //           if (messageIds.length > 0) {
 //             socket.emit('mark-messages-read', { chatId: chat._id, messageIds });
 //           }
@@ -359,7 +392,7 @@ export default ChatApp;
 //     setChats(prev => [newChat, ...prev]);
 //     setSelectedChat(newChat);
 //     setMessages([]);
-    
+
 //     // Join the new chat room
 //     if (socket) {
 //       socket.emit('join-chats', [newChat._id]);
@@ -368,7 +401,7 @@ export default ChatApp;
 
 //   return (
 //     <div className="chat-app-container">
-//       <Sidebar 
+//       <Sidebar
 //         chats={chats}
 //         selectedChat={selectedChat}
 //         onChatSelect={handleChatSelect}
@@ -377,7 +410,7 @@ export default ChatApp;
 //         user={user}
 //         onlineUsers={onlineUsers}
 //       />
-//       <ChatWindow 
+//       <ChatWindow
 //         selectedChat={selectedChat}
 //         messages={messages}
 //         onSendMessage={handleSendMessage}

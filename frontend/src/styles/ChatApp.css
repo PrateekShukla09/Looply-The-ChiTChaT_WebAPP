@@ -30,17 +30,26 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  transition: all 0.3s ease;
 }
-
+.user-avatar-container:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
 .user-avatar {
   position: relative;
 }
 
 .user-avatar img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 60%;
   border: 3px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+.user-avatar img:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  transform: scale(1.05);
 }
 
 .online-indicator {
@@ -352,10 +361,9 @@
   color: #6b7280;
   font-size: 14px;
   line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .chat-item.active .chat-preview {
