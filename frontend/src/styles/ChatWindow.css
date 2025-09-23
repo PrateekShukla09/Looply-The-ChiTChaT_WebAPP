@@ -687,3 +687,20 @@
   cursor: not-allowed;
   transform: none;
 }
+
+@media (max-width: 768px) {
+  .back-button {
+    background: none;
+    border: none;
+    margin-right: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #374151;
+  }
+
+  .back-button:hover {
+    color: #1d4ed8;
+  }
+}
