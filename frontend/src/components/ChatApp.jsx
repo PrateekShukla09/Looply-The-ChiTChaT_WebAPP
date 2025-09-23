@@ -16,11 +16,11 @@ const ChatApp = () => {
   const [loading, setLoading] = useState(true);
 
   const messagesEndRef = useRef(null);
-
+  const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5001";
   useEffect(() => {
     // Initialize socket connection
     const token = localStorage.getItem("token");
-    const newSocket = io("http://localhost:5001", {
+    const newSocket = io(SOCKET_URL, {
       auth: { token },
       transports: ['websocket', 'polling']
     });
