@@ -22,8 +22,12 @@ const ChatWindow = ({
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollToBottom();
   }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -103,13 +107,6 @@ const ChatWindow = ({
             <p>No messages yet. Start the conversation!</p>
           </div>
         ) : (
-          // messages.map((message) => (
-          //   <Message
-          //     key={message._id}
-          //     message={message}
-          //     isOwn={message.sender._id === user._id}
-          //     user={user}
-          //   />
           messages
             .filter((msg) => msg && msg._id) // skip null or invalid
             .map((message) => (

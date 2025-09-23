@@ -126,24 +126,6 @@ const ChatApp = () => {
   };
 
   return (
-    // <div className="chat-app-container">
-    //   <Sidebar
-    //     chats={chats}
-    //     selectedChat={selectedChat}
-    //     onChatSelect={handleChatSelect}
-    //     onNewChat={handleNewChat}
-    //     loading={loading}
-    //     user={user}
-    //     className="sidebar"
-    //   />
-    //   <ChatWindow
-    //     selectedChat={selectedChat}
-    //     messages={messages}
-    //     onSendMessage={handleSendMessage}
-    //     user={user}
-    //     className="chat-window"
-    //   />
-    // </div>
     <div
       className={`chat-app-container ${selectedChat ? "chat-selected" : ""}`}
     >
