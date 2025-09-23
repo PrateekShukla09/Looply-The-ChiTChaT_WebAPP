@@ -35,7 +35,7 @@ html, body, #root {
 
   /* Base gradient background */
   /* background: linear-gradient(135deg, #43acaeaf, #145273c0, #06324a88); */
-  background-color: #0d1118;
+  background-color: #9db8e8;
   color: #545456;
 
 
@@ -49,7 +49,7 @@ html, body, #root {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(151, 130, 130, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -66,7 +66,7 @@ html, body, #root {
 ============================== */
 :root {
   --radius: 0.625rem;
-  --card-bg: rgba(255, 255, 255, 0.08);
+  --card-bg: rgba(20, 16, 23, 0.925);
   --card-text: #1e293b;
   --accent: #3b82f6;
   --accent-foreground: #ffffff;
@@ -81,9 +81,9 @@ html, body, #root {
    Dark Theme
 ============================== */
 .dark {
-  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+  background-color: #0f1217e7;
 
-  --card-bg: rgba(31, 41, 55, 0.85);
+  --card-bg: rgba(17, 22, 27, 0.849);
   --card-text: #ffffff;
   --accent: #60a5fa;
   --accent-foreground: #0f172a;
@@ -135,7 +135,7 @@ body::before, body::after {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at 50% 50%, rgba(59,130,246,0.25), transparent 70%);
+  background: radial-gradient(circle at 50% 50%, rgba(16, 19, 22, 0.849), transparent 70%);
   animation: waveMove 12s linear infinite;
   z-index: -1; /* keep it behind everything */
 }
