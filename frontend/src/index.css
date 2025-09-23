@@ -34,8 +34,9 @@ html, body, #root {
   position: relative;
 
   /* Base gradient background */
-  background: linear-gradient(135deg, #43acaeaf, #145273c0, #06324a88);
-  color: #0c0c0d;
+  /* background: linear-gradient(135deg, #43acaeaf, #145273c0, #06324a88); */
+  background-color: #0d1118;
+  color: #545456;
 
 
 }
