@@ -1,5 +1,5 @@
 /* ==============================
-   Base Resets
+   Base Reset & Defaults
 ============================== */
 * {
   margin: 0;
@@ -9,117 +9,44 @@
 }
 
 html, body, #root {
-    height: 100%;
+  height: 100%;
   width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  /* ✅ Modern gradient background */
+  background: linear-gradient(135deg, #667eea, #764ba2);
   background-attachment: fixed;
   background-size: cover;
   background-repeat: no-repeat;
 
-  font-family: 'Inter', sans-serif;
   color: #f1f5f9;
-
+  overflow-x: hidden;
+  position: relative;
 }
 
 /* ==============================
    Scrollbar Styling
 ============================== */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: rgba(49, 41, 41, 0.858);
+  background: rgba(255,255,255,0.1);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #22282def;
-  border-radius: 3px;
+  background: #64748b;
+  border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #293039e7;
+  background: #475569;
 }
 
 /* ==============================
-   Light Theme (default)
+   Selection
 ============================== */
-:root {
-  --radius: 0.625rem;
-  --card-bg: rgba(60, 39, 76, 0.925);
-  --card-text: #1e293b;
-  --accent: #3b82f6;
-  --accent-foreground: #ffffff;
-  --muted: #94a3b8;
-  --muted-foreground: #475569;
-  --border: #e2e8f0;
-  --input-bg: #f1f5f9;
-  --ring: #3b82f6;
-}
-
-/* ==============================
-   Dark Theme
-============================== */
-.dark {
-  background-color: #232d3ee7;
-
-  --card-bg: rgba(27, 45, 60, 0.89);
-  --card-text: #ffffff;
-  --accent: #60a5fa;
-  --accent-foreground: #0f172a;
-  --muted: #64748b;
-  --muted-foreground: #94a3b8;
-  --border: #374151;
-  --input-bg: #1f2937;
-  --ring: #60a5fa;
-}
-
-/* ==============================
-   Utility Classes
-============================== */
-.card {
-  background: var(--card-bg);
-  color: var(--card-text);
-  border-radius: var(--radius);
-  padding: 1rem;
-  box-shadow: 0 4px 12px rgba(5, 4, 4, 0.842);
-}
-
-.text-accent {
-  color: var(--accent);
-}
-
-.bg-accent {
-  background: var(--accent);
-  color: var(--accent-foreground);
-}
-
-.input {
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  color: inherit;
-}
-
-.input:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--ring);
-}
-
-
-body::after {
-  animation-duration: 18s;
-  animation-direction: reverse;
-}
-
-@keyframes waveMove {
-  0%   { transform: translateY(0) rotate(0deg); }
-  50%  { transform: translateY(-10%) rotate(180deg); }
-  100% { transform: translateY(0) rotate(360deg); }
+::selection {
+  background: #3b82f6;
+  color: white;
 }
