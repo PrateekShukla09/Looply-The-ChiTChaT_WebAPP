@@ -7,11 +7,16 @@
 body {
   
   font-family: 'Your Custom Font', -apple-system, BlinkMacSystemFont, sans-serif;
-
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
-} */
+
+  /* ✅ set your background here */
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #f1f5f9;
+  height: 100%;
+  width: 100%;
+} 
 
  ::-webkit-scrollbar {
   width: 8px;
