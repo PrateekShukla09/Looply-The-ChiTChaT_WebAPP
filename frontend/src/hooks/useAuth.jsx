@@ -3,7 +3,7 @@ import { authAPI } from "../utils/api";
 
 // Firebase
 import { auth } from "../firebaseConfig";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth,onAuthStateChanged, signOut } from "firebase/auth";
 import axios from "axios";
 
 const AuthContext = createContext();
