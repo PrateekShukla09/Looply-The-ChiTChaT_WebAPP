@@ -285,19 +285,19 @@ const LoginPage = () => {
 
   // Setup reCAPTCHA
   const setupRecaptcha = () => {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        "recaptcha-container",
-        {
-          size: "invisible",
-          callback: (response) => {
-            console.log("reCAPTCHA verified", response);
-          },
+  if (!window.recaptchaVerifier) {
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      auth, // ✅ first argument must be auth
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: (response) => {
+          console.log("reCAPTCHA verified", response);
         },
-        auth
-      );
-    }
-  };
+      }
+    );
+  }
+};
 
   // Send OTP
   const sendOtp = async () => {
