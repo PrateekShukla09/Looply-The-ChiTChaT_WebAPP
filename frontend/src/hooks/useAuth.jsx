@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { authAPI } from "../utils/api";
+import { useNavigate } from "react-router-dom";
 
 // Firebase
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -21,10 +22,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const initAuth = async () => {
-      // 🔹 1. Try JWT persistence (email/password flow)
+      // 1️⃣ Try JWT persistence
       const token = localStorage.getItem("token");
       if (token) {
         try {
@@ -33,26 +35,27 @@ export const AuthProvider = ({ children }) => {
             setUser(response.data.user);
             setIsAuthenticated(true);
             setLoading(false);
-            return; // stop here if JWT worked
+            return;
           }
         } catch (error) {
-          console.warn("JWT session expired, clearing token.");
+          console.warn("JWT expired, clearing token.");
           localStorage.removeItem("token");
         }
       }
 
-      // 🔹 2. Listen for Firebase OTP auth (phone login)
+      // 2️⃣ Firebase OTP listener
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
         if (firebaseUser) {
           const idToken = await firebaseUser.getIdToken();
           try {
             const response = await axios.post(
               `${import.meta.env.VITE_BACKEND_URL}/api/auth/verify`,
-              { idToken },
-              { withCredentials: true }
+              { idToken }
             );
 
             if (response.data.success) {
+              // ✅ Save backend JWT
+              localStorage.setItem("token", response.data.token);
               setUser(response.data.user);
               setIsAuthenticated(true);
             }
@@ -72,7 +75,22 @@ export const AuthProvider = ({ children }) => {
     };
 
     initAuth();
-  }, []);
+
+    // 3️⃣ Listen for unauthorized events from api.js
+    const handleUnauthorized = () => {
+      console.warn("401 detected → logging out");
+      localStorage.removeItem("token");
+      setUser(null);
+      setIsAuthenticated(false);
+      navigate("/login");
+    };
+
+    window.addEventListener("unauthorized", handleUnauthorized);
+
+    return () => {
+      window.removeEventListener("unauthorized", handleUnauthorized);
+    };
+  }, [navigate]);
 
   // -----------------------------
   // Email/Password Login
@@ -115,25 +133,22 @@ export const AuthProvider = ({ children }) => {
   };
 
   // -----------------------------
-  // Logout (works for both flows)
+  // Logout
   // -----------------------------
   const logout = async () => {
     try {
-      // Sign out from Firebase (for OTP users)
+      // Optional: Sign out Firebase too
       await signOut(auth).catch(() => {});
 
-      // Clear local token (for JWT users)
+      // Clear token
       localStorage.removeItem("token");
 
-      // Tell backend to clear session
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
+      // Notify backend (just for DB status update)
+      await authAPI.logout();
 
       setUser(null);
       setIsAuthenticated(false);
+      navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -143,15 +158,16 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     isAuthenticated,
-    login, // email/password
-    register, // email/password
-    logout, // both
+    login,
+    register,
+    logout,
   };
 
   return (
     <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 };
+
 
 //   const checkAuthStatus = async () => {
 //     const token = localStorage.getItem("token");

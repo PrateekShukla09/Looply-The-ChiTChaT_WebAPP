@@ -230,6 +230,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { MessageCircle, Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import axios from "axios";
 import '../styles/LoginPage.css';
 
 const LoginPage = () => {
@@ -238,6 +241,8 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -245,6 +250,7 @@ const LoginPage = () => {
     password: ''
   });
 
+  // Handle input changes
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -253,6 +259,7 @@ const LoginPage = () => {
     setError('');
   };
 
+  // Email/Password login/register
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -276,8 +283,73 @@ const LoginPage = () => {
     }
   };
 
-  const fillDemoAccount = (email, password) => {
-    setFormData({ ...formData, email, password });
+  // Setup reCAPTCHA
+  const setupRecaptcha = () => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        "recaptcha-container",
+        {
+          size: "invisible",
+          callback: (response) => {
+            console.log("reCAPTCHA verified", response);
+          },
+        },
+        auth
+      );
+    }
+  };
+
+  // Send OTP
+  const sendOtp = async () => {
+    try {
+      if (!formData.phone) {
+        setError("Please enter phone number");
+        return;
+      }
+      setupRecaptcha();
+      const appVerifier = window.recaptchaVerifier;
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        formData.phone,
+        appVerifier
+      );
+      window.confirmationResult = confirmationResult;
+      setOtpSent(true);
+      console.log("OTP sent!");
+    } catch (err) {
+      console.error("sendOtp error:", err);
+      setError("Failed to send OTP. Please try again.");
+    }
+  };
+
+  // Verify OTP + Sync with Backend
+  const verifyOtp = async () => {
+    try {
+      if (window.confirmationResult) {
+        const result = await window.confirmationResult.confirm(otp);
+        console.log("✅ Phone login success:", result.user);
+
+        // 🔑 Get Firebase ID token
+        const idToken = await result.user.getIdToken();
+
+        // 🔑 Send to backend
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/verify`,
+          { idToken },
+          { withCredentials: true }
+        );
+
+        if (response.data.success) {
+          console.log("User synced with backend:", response.data.user);
+          setError("");
+        } else {
+          setError("Failed to verify user on server.");
+        }
+      }
+    } catch (err) {
+      console.error("verifyOtp error:", err);
+      setError("Invalid OTP. Please try again.");
+    }
   };
 
   return (
@@ -331,6 +403,7 @@ const LoginPage = () => {
               </div>
             </div>
 
+            {/* Phone + OTP only for Register */}
             {!isLogin && (
               <div className="form-group">
                 <label className="form-label">Phone Number</label>
@@ -346,6 +419,36 @@ const LoginPage = () => {
                     required={!isLogin}
                   />
                 </div>
+
+                {!otpSent ? (
+                  <button
+                    type="button"
+                    onClick={sendOtp}
+                    className="submit-button"
+                    style={{ marginTop: "10px" }}
+                  >
+                    Send OTP
+                  </button>
+                ) : (
+                  <>
+                    <input
+                      type="text"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      placeholder="Enter OTP"
+                      className="form-input"
+                      style={{ marginTop: "10px" }}
+                    />
+                    <button
+                      type="button"
+                      onClick={verifyOtp}
+                      className="submit-button"
+                      style={{ marginTop: "10px" }}
+                    >
+                      Verify OTP
+                    </button>
+                  </>
+                )}
               </div>
             )}
 
@@ -403,33 +506,13 @@ const LoginPage = () => {
                 setIsLogin(!isLogin);
                 setError('');
                 setFormData({ name: '', email: '', phone: '', password: '' });
+                setOtpSent(false);
               }}
               className="auth-switch-button"
             >
               {isLogin ? 'Sign Up' : 'Sign In'}
             </button>
           </div>
-
-          {/* Demo Accounts */}
-          {/* {isLogin && (
-            <div className="demo-accounts">
-              <div className="demo-title">Demo Accounts:</div>
-              <div 
-                className="demo-account"
-                onClick={() => fillDemoAccount('john@example.com', 'password123')}
-                style={{ cursor: 'pointer' }}
-              >
-                <span>📧</span> john@example.com | <span>🔑</span> password123
-              </div>
-              <div 
-                className="demo-account"
-                onClick={() => fillDemoAccount('jane@example.com', 'password123')}
-                style={{ cursor: 'pointer' }}
-              >
-                <span>📧</span> jane@example.com | <span>🔑</span> password123
-              </div>
-            </div>
-          )} */}
         </div>
 
         {/* Features */}
@@ -447,7 +530,7 @@ const LoginPage = () => {
               </div>
               <p className="feature-title">Easy Contacts</p>
             </div>
-            <div className="feature-item">
+            <div className="feature-item secure">
               <div className="feature-icon secure">
                 <Lock size={24} />
               </div>
@@ -456,6 +539,9 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ✅ reCAPTCHA container */}
+      <div id="recaptcha-container"></div>
     </div>
   );
 };

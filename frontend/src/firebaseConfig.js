@@ -1,19 +1,19 @@
+// src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
 
-// Firebase configuration (from .env)
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyCptkj75rMR_EWnTYlvjJ6vdHRkb3leQuo",
+  authDomain: "looply-thechitchatwebapp.firebaseapp.com",
+  projectId: "looply-thechitchatwebapp",
+  storageBucket: "looply-thechitchatwebapp.firebasestorage.app",
+  messagingSenderId: "451857234489",
+  appId: "1:451857234489:web:426fe255acb3da6feeabe8",
+  measurementId: "G-C75WCFZ54D"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
-// Export Firebase Auth instance
-export const auth = getAuth(app);
-
+export { app, analytics };
