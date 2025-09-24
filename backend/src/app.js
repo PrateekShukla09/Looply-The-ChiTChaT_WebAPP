@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const cookieParser = require('cookie-parser');  // ✅ add this
 require('dotenv').config();
 
 const connectDB = require('./config/database');
@@ -23,8 +24,8 @@ app.use(helmet());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // limit each IP to 1000 requests per windowMs
+  windowMs: 15 * 60 * 1000, 
+  max: 1000,
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use(limiter);
@@ -47,6 +48,9 @@ app.use(cors({
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// ✅ Cookie parsing middleware
+app.use(cookieParser());
 
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

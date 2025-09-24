@@ -139,3 +139,90 @@
     box-shadow: none !important;
   }
 }
+
+
+/* Container for auth screens */
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* Card box */
+.auth-card {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Title */
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Input group */
+.auth-input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.auth-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #444;
+}
+
+.auth-input {
+  width: calc(100% - 100px);
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-right: 8px;
+  font-size: 1rem;
+}
+
+.auth-button {
+  padding: 10px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.auth-button:hover:not(:disabled) {
+  background: #556cd6;
+}
+
+.auth-button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+/* Messages */
+.auth-message {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.auth-message.success {
+  color: #2e7d32;
+}
+
+.auth-message.error {
+  color: #d32f2f;
+}
