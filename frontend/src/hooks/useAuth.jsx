@@ -2,8 +2,9 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { authAPI } from "../utils/api";
 
 // Firebase
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { getAuth,onAuthStateChanged, signOut } from "firebase/auth";
+
 import axios from "axios";
 
 const AuthContext = createContext();

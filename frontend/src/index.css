@@ -35,7 +35,7 @@ html, body, #root {
 
   /* Base gradient background */
   /* background: linear-gradient(135deg, #43acaeaf, #145273c0, #06324a88); */
-  background-color: #121010df;
+  background-color: #312929df;
   color: #545456;
 
 
@@ -49,16 +49,16 @@ html, body, #root {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(23, 20, 20, 0.858);
+  background: rgba(49, 41, 41, 0.858);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #101214ef;
+  background: #22282def;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #22272de7;
+  background: #293039e7;
 }
 
 /* ==============================
@@ -66,7 +66,7 @@ html, body, #root {
 ============================== */
 :root {
   --radius: 0.625rem;
-  --card-bg: rgba(20, 16, 23, 0.925);
+  --card-bg: rgba(60, 39, 76, 0.925);
   --card-text: #1e293b;
   --accent: #3b82f6;
   --accent-foreground: #ffffff;
@@ -81,9 +81,9 @@ html, body, #root {
    Dark Theme
 ============================== */
 .dark {
-  background-color: #0f1217e7;
+  background-color: #232d3ee7;
 
-  --card-bg: rgba(19, 28, 36, 0.89);
+  --card-bg: rgba(27, 45, 60, 0.89);
   --card-text: #ffffff;
   --accent: #60a5fa;
   --accent-foreground: #0f172a;
@@ -127,18 +127,7 @@ html, body, #root {
   outline: none;
   box-shadow: 0 0 0 3px var(--ring);
 }
-/* 🌊 Animated Waves Background */
-body::before, body::after {
-  content: "";
-  position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at 50% 50%, rgba(25, 30, 36, 0.849), transparent 70%);
-  animation: waveMove 12s linear infinite;
-  z-index: -1; /* keep it behind everything */
-}
+
 
 body::after {
   animation-duration: 18s;
