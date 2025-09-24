@@ -1,12 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { authAPI } from "../utils/api";
-import { useNavigate } from "react-router-dom";
-
-// Firebase
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../firebaseConfig";
-
-import axios from "axios";
 
 const AuthContext = createContext();
 
@@ -22,79 +15,32 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const initAuth = async () => {
-      // 1️⃣ Try JWT persistence
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const response = await authAPI.getMe();
-          if (response.data.success) {
-            setUser(response.data.user);
-            setIsAuthenticated(true);
-            setLoading(false);
-            return;
-          }
-        } catch (error) {
-          console.warn("JWT expired, clearing token.");
-          localStorage.removeItem("token");
-        }
-      }
+    checkAuthStatus();
+  }, []);
 
-      // 2️⃣ Firebase OTP listener
-      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-        if (firebaseUser) {
-          const idToken = await firebaseUser.getIdToken();
-          try {
-            const response = await axios.post(
-              `${import.meta.env.VITE_BACKEND_URL}/api/auth/verify`,
-              { idToken }
-            );
-
-            if (response.data.success) {
-              // ✅ Save backend JWT
-              localStorage.setItem("token", response.data.token);
-              setUser(response.data.user);
-              setIsAuthenticated(true);
-            }
-          } catch (err) {
-            console.error("Auth verification failed:", err);
-            setUser(null);
-            setIsAuthenticated(false);
-          }
+  const checkAuthStatus = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const response = await authAPI.getMe();
+        if (response.data.success) {
+          setUser(response.data.user);
+          setIsAuthenticated(true);
         } else {
-          setUser(null);
+          localStorage.removeItem("token");
           setIsAuthenticated(false);
         }
-        setLoading(false);
-      });
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+      }
+    }
+    setLoading(false);
+  };
 
-      return () => unsubscribe();
-    };
-
-    initAuth();
-
-    // 3️⃣ Listen for unauthorized events from api.js
-    const handleUnauthorized = () => {
-      console.warn("401 detected → logging out");
-      localStorage.removeItem("token");
-      setUser(null);
-      setIsAuthenticated(false);
-      navigate("/login");
-    };
-
-    window.addEventListener("unauthorized", handleUnauthorized);
-
-    return () => {
-      window.removeEventListener("unauthorized", handleUnauthorized);
-    };
-  }, [navigate]);
-
-  // -----------------------------
-  // Email/Password Login
-  // -----------------------------
   const login = async (email, password) => {
     try {
       const response = await authAPI.login(email, password);
@@ -112,9 +58,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // -----------------------------
-  // Email/Password Register
-  // -----------------------------
   const register = async (userData) => {
     try {
       const response = await authAPI.register(userData);
@@ -132,26 +75,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // -----------------------------
-  // Logout
-  // -----------------------------
-  const logout = async () => {
-    try {
-      // Optional: Sign out Firebase too
-      await signOut(auth).catch(() => {});
-
-      // Clear token
-      localStorage.removeItem("token");
-
-      // Notify backend (just for DB status update)
-      await authAPI.logout();
-
-      setUser(null);
-      setIsAuthenticated(false);
-      navigate("/login");
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    setIsAuthenticated(false);
   };
 
   const value = {
@@ -164,7 +91,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
   );
 };
 
