@@ -18,8 +18,8 @@
 }
 
 .login-wrapper {
-  width: 100%;
-  max-width: 460px;
+  max-width: 500px;
+  max-height: 950px;
   background: rgba(255, 255, 255, 0.08); /* frosted glass effect */
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -46,7 +46,7 @@
 =========================== */
 .login-header {
   text-align: center;
-  padding: 30px 20px 25px;
+  padding: 22px 15px 18px;
   background: linear-gradient(135deg, #1f2937, #3b82f6);
   color: white;
   position: relative;
@@ -85,7 +85,7 @@
    Form
 =========================== */
 .login-form {
-  padding: 28px;
+  padding: 22px;
 }
 
 .form-group {
@@ -200,7 +200,7 @@
    Features Section
 =========================== */
 .features-section {
-  padding: 18px 20px;
+  padding: 15px 16px;
   background: rgba(255, 255, 255, 0.05);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -217,10 +217,10 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 14px;
+  padding: 12px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff; /* ✅ fixed text color for visibility */
+  background: 308deg, #2a525f, #234650;
+  color: #a49b9b; /* ✅ fixed text color for visibility */
   transition: all 0.3s ease;
 }
 
