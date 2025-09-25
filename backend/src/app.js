@@ -34,7 +34,7 @@ app.use(limiter);
 const allowedOrigins = [
   "http://localhost:5173", // dev Vite
   "https://looply-the-chi-t-cha-git-baf168-18prateekshukla-5048s-projects.vercel.app", // Vercel Preview
-  "https://looply-the-chi-t-cha-t-web-app.vercel.app/" // if you later set a custom domain
+  "https://looply-the-chi-t-cha-t-web-app.vercel.app" // if you later set a custom domain
 ];
 
 app.use(cors({
