@@ -211,8 +211,9 @@
 
 /* Chat bubbles */
 .message .bubble {
-   position: relative;
-  padding-bottom: 20px;
+ 
+  position: relative;
+  padding: 12px 16px;   /* ✅ added padding for readability */
   border-radius: 26px;
   font-size: 15px;
   line-height: 1.6;
@@ -220,6 +221,8 @@
   word-break: break-word;
   transition: all 0.2s ease;
   animation: popIn 0.3s ease-out;
+  color: #1f2937;       /* ✅ default text color (dark gray) */
+
 }
 @keyframes popIn {
   from { transform: scale(0.9); opacity: 0; }
