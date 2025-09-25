@@ -219,7 +219,7 @@
   gap: 8px;
   padding: 12px;
   border-radius: 14px;
-  background: 308deg, #2a525f, #234650;
+  background: linear-gradient(308deg, #2a525f, #234650);
   color: #a49b9b; /* ✅ fixed text color for visibility */
   transition: all 0.3s ease;
 }
