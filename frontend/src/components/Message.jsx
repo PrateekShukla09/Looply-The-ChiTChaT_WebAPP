@@ -58,7 +58,7 @@ const Message = ({ message, isOwn, user }) => {
             </div>
           )}
 
-          <div className="break-words">
+          <div className="break-words text-black">
             {message.messageType === 'text' ? (
               <p className="text-sm">{message.content}</p>
             ) : (
