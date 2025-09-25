@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Message from "./Message";
 import "../styles/ChatWindow.css";
+
 const ChatWindow = ({
   selectedChat,
   messages,
@@ -39,7 +40,42 @@ const ChatWindow = ({
       setNewMessage("");
     }
   };
+
   const currentUserId = user?._id || user?.id;
+
+  // ✅ Define getChatName here
+  const getChatName = (chat) => {
+    if (!chat) return "Unknown Chat";
+
+    if (chat.isGroupChat) {
+      return chat.name || chat.chatName || "Group Chat";
+    }
+
+    if (!chat.participants || !Array.isArray(chat.participants)) {
+      return "Unknown Chat";
+    }
+
+    const otherParticipant = chat.participants.find((participant) => {
+      const participantId =
+        typeof participant === "object" ? participant._id : participant;
+      return participantId !== currentUserId;
+    });
+
+    return otherParticipant?.name || "User";
+  };
+
+  // ✅ Define isOnline here
+  const isOnline = (chat) => {
+    if (chat.isGroupChat || !chat.participants) return false;
+
+    const otherParticipant = chat.participants.find((participant) => {
+      const participantId =
+        typeof participant === "object" ? participant._id : participant;
+      return participantId !== currentUserId;
+    });
+
+    return otherParticipant?.isOnline || false;
+  };
 
   if (!selectedChat) {
     return (

@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Search, UserPlus, Key, Settings, MoreVertical } from "lucide-react";
@@ -16,7 +14,7 @@ const Sidebar = ({
   loading,
   user,
 }) => {
-  const {logout} = useAuth();
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -26,42 +24,29 @@ const Sidebar = ({
 
   const tabs = ["All", "Favorite", "Groups"];
 
-
   const currentUserId = user?._id || user?.id;
 
+  // ✅ Fixed getChatName
   const getChatName = (chat) => {
-    console.log("Getting chat name for:", chat); // Debug log
-    console.log("Participants:", chat.participants); // Debug log
-    console.log("Current user ID:", user._id); // Debug log
+    if (!chat) return "Unknown Chat";
 
     if (chat.isGroupChat) {
-      return chat.name || "Group Chat";
-    } else {
-      // Ensure participants is an array and has populated user objects
-      if (!chat.participants || !Array.isArray(chat.participants)) {
-        return "Unknown Chat";
-      }
-
-      // Find the other participant
-      const otherParticipant = chat.participants.find((participant) => {
-        // Handle both populated and non-populated participant objects
-        const participantId =
-          typeof participant === "object" ? participant._id : participant;
-        return participantId !== currentUserId;
-      });
-
-      console.log("Other participant found:", otherParticipant); // Debug log
-
-      if (!otherParticipant) {
-        return "Unknown User";
-      }
-
-      // Return the name if participant is populated, otherwise 'User'
-      return otherParticipant.name || "User";
+      return chat.name || chat.chatName || "Group Chat";
     }
+
+    if (!chat.participants || !Array.isArray(chat.participants)) {
+      return "Unknown Chat";
+    }
+
+    const otherParticipant = chat.participants.find((participant) => {
+      const participantId =
+        typeof participant === "object" ? participant._id : participant;
+      return participantId !== currentUserId;
+    });
+
+    return otherParticipant?.name || "User";
   };
 
-  // FIXED: Get correct chat avatar
   const getChatAvatar = (chat) => {
     if (chat.isGroupChat) {
       return chat.groupAvatar || getChatName(chat).charAt(0);
@@ -72,12 +57,12 @@ const Sidebar = ({
       return otherParticipant?.avatar || getChatName(chat).charAt(0);
     }
   };
+
   const filteredChats = chats.filter((chat) => {
     const searchLower = searchQuery.toLowerCase();
     const chatName = getChatName(chat).toLowerCase();
     return chatName.includes(searchLower);
   });
-
 
   const getLastMessagePreview = (chat) => {
     if (!chat.lastMessage) return "No messages yet";
@@ -105,7 +90,6 @@ const Sidebar = ({
     return formatDistanceToNow(new Date(date), { addSuffix: false });
   };
 
-
   const isOnline = (chat) => {
     if (chat.isGroupChat || !chat.participants) return false;
 
@@ -117,6 +101,7 @@ const Sidebar = ({
 
     return otherParticipant?.isOnline || false;
   };
+
   return (
     <>
       <div className="sidebar">
@@ -125,7 +110,13 @@ const Sidebar = ({
           <div className="user-info">
             <div className="user-avatar-container">
               <div className="user-avatar">
-                <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=3B82F6&color=fff`} alt={user?.name} />
+                <img
+                  src={
+                    user?.avatar ||
+                    `https://ui-avatars.com/api/?name=${user?.name}&background=3B82F6&color=fff`
+                  }
+                  alt={user?.name}
+                />
                 <div className="online-indicator"></div>
               </div>
               <div className="user-details">
@@ -135,21 +126,33 @@ const Sidebar = ({
             </div>
 
             <div className="header-actions">
-              <button className="menu-trigger" onClick={() => setShowDropdown(!showDropdown)}>
+              <button
+                className="menu-trigger"
+                onClick={() => setShowDropdown(!showDropdown)}
+              >
                 <MoreVertical size={18} />
               </button>
-              
+
               {showDropdown && (
                 <div className="dropdown-menu">
-                  <button className="dropdown-item" onClick={() => setShowInviteModal(true)}>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => setShowInviteModal(true)}
+                  >
                     <Key size={16} />
                     My Invite Key
                   </button>
-                  <button className="dropdown-item" onClick={() => setShowAddUserModal(true)}>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => setShowAddUserModal(true)}
+                  >
                     <UserPlus size={16} />
                     Add User
                   </button>
-                  <button className="dropdown-item" onClick={() => setShowProfileModal(true)}>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => setShowProfileModal(true)}
+                  >
                     <Settings size={16} />
                     Settings
                   </button>
@@ -161,9 +164,12 @@ const Sidebar = ({
           {/* Invite Key Preview */}
           <div className="invite-key-preview">
             <div className="title">Your Invite Key:</div>
-            <div className="key">{user?.inviteKey || 'Loading...'}</div>
+            <div className="key">{user?.inviteKey || "Loading..."}</div>
             <div className="actions">
-              <button className="share-button" onClick={() => setShowInviteModal(true)}>
+              <button
+                className="share-button"
+                onClick={() => setShowInviteModal(true)}
+              >
                 Share
               </button>
             </div>
@@ -188,7 +194,7 @@ const Sidebar = ({
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`tab ${activeTab === tab ? 'active' : ''}`}
+              className={`tab ${activeTab === tab ? "active" : ""}`}
             >
               {tab}
             </button>
@@ -211,7 +217,10 @@ const Sidebar = ({
               </div>
               <h3>No conversations yet</h3>
               <p>Start chatting by adding someone with their invite key</p>
-              <button className="add-user-button" onClick={() => setShowAddUserModal(true)}>
+              <button
+                className="add-user-button"
+                onClick={() => setShowAddUserModal(true)}
+              >
                 Add User
               </button>
             </div>
@@ -220,23 +229,33 @@ const Sidebar = ({
               <div
                 key={chat._id}
                 onClick={() => onChatSelect(chat)}
-                className={`chat-item ${selectedChat?._id === chat._id ? 'active' : ''}`}
+                className={`chat-item ${
+                  selectedChat?._id === chat._id ? "active" : ""
+                }`}
               >
                 <div className="chat-avatar-container">
                   <img
-                    src={`https://ui-avatars.com/api/?name=${getChatName(chat)}&background=random`}
+                    src={`https://ui-avatars.com/api/?name=${getChatName(
+                      chat
+                    )}&background=random`}
                     alt={getChatName(chat)}
                     className="chat-avatar"
                   />
-                  {isOnline(chat) && <div className="chat-online-indicator"></div>}
+                  {isOnline(chat) && (
+                    <div className="chat-online-indicator"></div>
+                  )}
                 </div>
-                
+
                 <div className="chat-info">
                   <div className="chat-header">
                     <h4 className="chat-name">{getChatName(chat)}</h4>
-                    <span className="chat-time">{formatMessageTime(chat.updatedAt)}</span>
+                    <span className="chat-time">
+                      {formatMessageTime(chat.updatedAt)}
+                    </span>
                   </div>
-                  <p className="chat-preview">{getLastMessagePreview(chat)}</p>
+                  <p className="chat-preview">
+                    {getLastMessagePreview(chat)}
+                  </p>
                 </div>
 
                 <div className="chat-meta">
@@ -273,4 +292,3 @@ const Sidebar = ({
 };
 
 export default Sidebar;
-

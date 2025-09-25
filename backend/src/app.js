@@ -31,7 +31,11 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration
-const allowedOrigins = process.env.CLIENT_URL.split(",");
+const allowedOrigins = [
+  "http://localhost:5173", // dev Vite
+  "https://looply-the-chi-t-cha-git-baf168-18prateekshukla-5048s-projects.vercel.app", // Vercel Preview
+  "https://your-production-domain.com" // if you later set a custom domain
+];
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -49,8 +53,7 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// ✅ Cookie parsing middleware
-app.use(cookieParser());
+
 
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -65,7 +68,7 @@ app.use('/api/messages', messageRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
-    message: 'WhatsApp Clone API is running',
+    message: 'Looply API is running',
     timestamp: new Date().toISOString()
   });
 });
